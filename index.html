@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿爪 · 个人主页</title>
+<meta name="description" content="阿爪的个人主页">
+<style>
+  :root {
+    --text: #1f2329;
+    --text-2: #5f6670;
+    --accent: #3b82f6;
+    --accent-soft: rgba(59, 130, 246, .12);
+    --glass: rgba(255, 255, 255, .72);
+    --glass-border: rgba(255, 255, 255, .55);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ---------- 动态风景背景：双层交叉淡入淡出轮播 ---------- */
+  .scenery { position: fixed; inset: 0; z-index: -2; background: linear-gradient(160deg, #a8c8ec 0%, #d9e8f5 45%, #f5e6d3 100%); }
+  .scenery .layer {
+    position: absolute; inset: -4%;          /* 比屏幕略大，配合缩放动画不露边 */
+    background: center / cover no-repeat;
+    opacity: 0; transition: opacity 2s ease;
+    animation: kenburns 26s ease-in-out infinite alternate;  /* 缓慢推拉摇移 */
+    filter: brightness(1.12) saturate(1.08);   /* 提亮 + 轻微增色 */
+  }
+  .scenery .layer.active { opacity: 1; }
+  @keyframes kenburns {
+    from { transform: scale(1) translate(0, 0); }
+    to   { transform: scale(1.08) translate(-1.2%, 1%); }
+  }
+  .scenery::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.38) 55%, rgba(250,250,252,.92) 100%);
+  }
+
+  /* ---------- 首屏 ---------- */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 40px 20px; position: relative;
+  }
+  .hero-card {
+    /* 毛玻璃：内容浮在风景上 */
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 24px;
+    padding: 46px 54px;
+    box-shadow: 0 20px 60px rgba(31, 45, 61, .16);
+    max-width: 560px; width: 100%;
+    animation: fadeUp .9s ease both;
+  }
+  .avatar {
+    width: 110px; height: 110px; border-radius: 50%;
+    border: 4px solid rgba(255,255,255,.9);
+    box-shadow: 0 8px 26px rgba(31, 45, 61, .22);
+    object-fit: cover; background: var(--accent-soft);
+  }
+  .name { margin-top: 18px; font-size: 32px; font-weight: 700; letter-spacing: 1px; }
+  .tagline { margin-top: 10px; font-size: 16px; color: var(--text-2); min-height: 24px; }
+  .tagline .cursor { color: var(--accent); animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .socials { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .socials a {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 999px;
+    background: rgba(255,255,255,.85); border: 1px solid rgba(31,45,61,.1);
+    color: var(--text); text-decoration: none; font-size: 14px;
+    transition: transform .2s, box-shadow .2s, color .2s;
+  }
+  .socials a:hover {
+    transform: translateY(-3px); color: var(--accent);
+    box-shadow: 0 8px 20px rgba(31, 45, 61, .15);
+  }
+  .socials .icon { width: 16px; height: 16px; fill: currentColor; }
+
+  .scroll-hint {
+    position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+    color: rgba(31,35,41,.65); font-size: 13px; text-decoration: none;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce { 0%,100% { transform: translate(-50%,0); } 50% { transform: translate(-50%,8px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- 内容区块（一排排卡片，开发者款版式） ---------- */
+  .content { max-width: 720px; margin: 0 auto; padding: 10px 24px 0; position: relative; }
+  section { padding: 46px 0 6px; }
+  .section-title {
+    font-size: 23px; font-weight: 700; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::before {
+    content: ""; width: 6px; height: 22px; border-radius: 3px; background: var(--accent);
+  }
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 14px;
+    padding: 22px 24px; margin-bottom: 16px;
+    box-shadow: 0 6px 24px rgba(31, 45, 61, .08);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(31, 45, 61, .14); }
+  .card h3 { font-size: 17px; margin-bottom: 6px; }
+  .card .meta { font-size: 13px; color: var(--accent); margin-bottom: 8px; }
+  .card p { font-size: 14.5px; color: var(--text-2); line-height: 1.8; }
+  .tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-size: 12px; padding: 3px 10px; border-radius: 999px;
+    background: rgba(255,255,255,.8); border: 1px solid rgba(59,130,246,.25);
+    color: var(--accent);
+  }
+
+  /* ---------- 主题配图卡片（爱好/学习专用） ---------- */
+  .card.topic {
+    position: relative; overflow: hidden;
+    background: none;                 /* 背景交给配图层 */
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .card.topic .topic-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: center / cover no-repeat;
+  }
+  /* 白色半透明遮罩：保证文字可读，同时透出主题图 */
+  .card.topic .topic-bg::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(255,255,255,.93) 0%, rgba(255,255,255,.82) 55%, rgba(255,255,255,.62) 100%);
+  }
+  .card.topic > h3, .card.topic > .meta, .card.topic > p, .card.topic > .tags {
+    position: relative; z-index: 1;
+  }
+
+  footer {
+    text-align: center; padding: 44px 20px 36px; color: var(--text-2); font-size: 13px;
+  }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s; }
+  .reveal.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 480px) {
+    .hero-card { padding: 36px 26px; }
+    .name { font-size: 26px; }
+    .avatar { width: 96px; height: 96px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scenery">
+  <div class="layer" id="bgA"></div>
+  <div class="layer" id="bgB"></div>
+</div>
+
+<!-- ===================== 首屏 ===================== -->
+<header class="hero">
+  <div class="hero-card">
+    <!-- 头像：替换成自己的图片路径即可 -->
+    <img class="avatar" src="avatar.jpg" alt="头像"
+         onerror="this.outerHTML='<div class=\'avatar\' style=\'display:inline-flex;align-items:center;justify-content:center;font-size:40px\'>👤</div>'">
+    <h1 class="name">阿爪</h1>
+    <p class="tagline"><span id="typewriter"></span><span class="cursor">|</span></p>
+
+    <!-- 社交链接 -->
+    <nav class="socials">
+      <a href="https://xhslink.cn/m/3s2w8bp2tO9" target="_blank" rel="noopener">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2zm6 8h-2v-4c0-.55-.45-1-1-1s-1 .45-1 1v4h-2v-6h2v1.1c.36-.66 1.1-1.1 2-1.1 1.66 0 2 1.34 2 3v3z"/></svg>
+        小红书
+      </a>
+      <a href="mailto:zzt21222@gmail.com">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        邮箱
+      </a>
+      <a href="https://github.com/zzt21222" target="_blank" rel="noopener">
+        <svg class="icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </div>
+
+  <a class="scroll-hint" href="#about">向下看看 ↓</a>
+</header>
+
+<!-- ===================== 内容区 ===================== -->
+<main class="content">
+
+  <section id="about" class="reveal">
+    <h2 class="section-title">关于我</h2>
+    <div class="card">
+      <p>06 男大专生，AI 小白自救中。从零开始学习 AI，记录普通人也能上手的踩坑过程。</p>
+      <div class="tags">
+        <span class="tag">06 男大专生</span>
+        <span class="tag">AI 小白自救中</span>
+        <span class="tag">从零开始</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="hobbies" class="reveal">
+    <h2 class="section-title">我的爱好</h2>
+    <div class="card topic">
+      <div class="topic-bg" style="background-image:url('basketball.jpg')"></div>
+      <h3>🏀 篮球</h3>
+      <div class="meta">每周固定活动</div>
+      <p>打球前：詹皇附体！打球后：菜鸡本鸡。</p>
+    </div>
+    <div class="card topic">
+      <div class="topic-bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Billiard_balls_on_table.jpg/1280px-Billiard_balls_on_table.jpg')"></div>
+      <h3>🎱 台球</h3>
+      <div class="meta">休闲娱乐</div>
+      <p>休闲娱乐时的保留项目，目标一杆清台。</p>
+    </div>
+    <div class="card topic">
+      <div class="topic-bg" style="background-image:url('travel.jpg')"></div>
+      <h3>✈️ 旅游</h3>
+      <div class="meta">看世界</div>
+      <p>地球探险记。</p>
+    </div>
+  </section>
+
+  <section id="learning" class="reveal">
+    <h2 class="section-title">正在学习</h2>
+    <div class="card topic">
+      <div class="topic-bg" style="background-image:url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=75')"></div>
+      <h3>💻 AI 工具</h3>
+      <div class="meta">进行中</div>
+      <p>小白摸索中······</p>
+    </div>
+    <div class="card topic">
+      <div class="topic-bg" style="background-image:url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=75')"></div>
+      <h3>📖 阅读</h3>
+      <div class="meta">日常习惯</div>
+      <p>爱好看奇幻仙侠小说。目前正在看《认知觉醒》《刻意练习》。</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 阿爪 · 山高路远，步履不停
+</footer>
+
+<script>
+  // ---------- 动态风景背景 ----------
+  // 想换本地图：把下面数组里的地址换成你自己的照片文件名即可（照片放同目录）
+  // 例：const BG_LIST = ["bg1.jpg","bg2.jpg","bg3.jpg"];
+  const BG_LIST = [
+    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=2560&q=90", // 雪山
+    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=2560&q=90", // 云海日出
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=2560&q=90", // 森林
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2560&q=90", // 海滩
+    "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=2560&q=90", // 草原黄昏
+    "https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=2560&q=90", // 湖泊
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2560&q=90", // 山谷
+    "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=2560&q=90"  // 星空雪山
+  ];
+  let lastIdx = -1;
+  function randomBgUrl() {
+    let i;
+    do { i = Math.floor(Math.random() * BG_LIST.length); } while (i === lastIdx && BG_LIST.length > 1);
+    lastIdx = i;
+    return BG_LIST[i];
+  }
+
+  const layers = [document.getElementById("bgA"), document.getElementById("bgB")];
+  let cur = 0;
+
+  function swapBg() {
+    const next = layers[1 - cur];
+    const img = new Image();
+    img.onload = () => {
+      next.style.backgroundImage = `url("${img.src}")`;
+      next.classList.add("active");
+      layers[cur].classList.remove("active");
+      cur = 1 - cur;
+    };
+    img.onerror = () => setTimeout(swapBg, 3000);  // 加载失败换一张重试
+    img.src = randomBgUrl();
+  }
+
+  swapBg();                       // 进入页面立即随机一张
+  setInterval(swapBg, 12000);     // 每 12 秒淡入淡出换一张
+
+  // ---------- 打字机：改这里替换个性签名 ----------
+  const lines = [
+    "06 男大专生 · AI 小白自救中",
+    "从零开始学习 AI",
+    "记录普通人也能上手的踩坑过程"
+  ];
+  const tw = document.getElementById("typewriter");
+  let li = 0, ci = 0, deleting = false;
+  function tick() {
+    const line = lines[li];
+    tw.textContent = line.slice(0, ci);
+    if (!deleting) {
+      if (ci < line.length) { ci++; setTimeout(tick, 90); }
+      else { deleting = true; setTimeout(tick, 1800); }
+    } else {
+      if (ci > 0) { ci--; setTimeout(tick, 40); }
+      else { deleting = false; li = (li + 1) % lines.length; setTimeout(tick, 400); }
+    }
+  }
+  tick();
+
+  // ---------- 滚动入场 ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("show"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+</script>
+</body>
+</html>
