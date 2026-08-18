@@ -142,6 +142,27 @@
     position: relative; z-index: 1;
   }
 
+  /* ---------- 我的作品：小程序二维码卡片 ---------- */
+  .work-card {
+    display: flex; gap: 20px; align-items: center;
+  }
+  .work-qr {
+    flex-shrink: 0; width: 130px; height: 130px;
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 4px 14px rgba(30,60,100,.12);
+    border: 1px solid rgba(255,255,255,.7);
+  }
+  .work-qr img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .work-info { flex: 1; min-width: 0; }
+  .work-info h3 { margin-bottom: 4px; }
+  .work-hint {
+    margin-top: 8px; font-size: 13px; color: var(--accent); font-weight: 600;
+  }
+  @media (max-width: 480px) {
+    .work-card { flex-direction: column; text-align: center; }
+    .work-qr { width: 150px; height: 150px; }
+  }
+
   footer {
     text-align: center; padding: 44px 20px 36px; color: var(--text-2); font-size: 13px;
   }
@@ -242,6 +263,22 @@
       <h3>📖 阅读</h3>
       <div class="meta">日常习惯</div>
       <p>爱好看奇幻仙侠小说。目前正在看《认知觉醒》《刻意练习》。</p>
+    </div>
+  </section>
+
+  <!-- 我的作品：小程序二维码卡片 -->
+  <section id="works" class="reveal">
+    <h2 class="section-title">我的作品</h2>
+    <div class="card work-card">
+      <div class="work-qr">
+        <img src="miniprogram-qr.jpg" alt="豆豆工坊A 小程序码">
+      </div>
+      <div class="work-info">
+        <h3>🫘 豆豆工坊A</h3>
+        <div class="meta">微信小程序 · 已上线</div>
+        <p>一句话生成拼豆图纸的小工具，上传图片自动配色、生成图纸，新手也能秒上手。</p>
+        <p class="work-hint">📱 微信扫一扫，直接体验</p>
+      </div>
     </div>
   </section>
 
